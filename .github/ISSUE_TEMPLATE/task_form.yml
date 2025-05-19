@@ -3,7 +3,7 @@ description: Use this form to create a new task and track its progress
 title: "[TASK] "
 labels:
   - task
-assignees: ''
+assignees: []
 
 body:
   - type: markdown
