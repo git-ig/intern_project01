@@ -24,9 +24,9 @@ body:
     attributes:
       label: Acceptance Criteria
       description: Define what constitutes a completed task
-      placeholder: - [ ] Criterion 1
-      validations:
-        required: true
+      placeholder: "- [ ] Criterion 1"
+    validations:
+      required: true
 
   - type: dropdown
     id: priority
