@@ -1,4 +1,4 @@
-*** .env
+*** env
 modify .env_emaple with your data and rename it to .env
 
 ### dump
