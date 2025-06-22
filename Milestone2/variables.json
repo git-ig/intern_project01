@@ -1,0 +1,153 @@
+{
+  "global": {
+    "environment": "your_env",
+    "aws_region": "your_region",
+    "project": "your_project"
+  },
+  
+  "terraform": {
+    "vpc": {
+      "cidr": "10.2.0.0/16",
+      "availability_zones": ["us-east-1a", "us-east-1b"],
+      "private_subnet_cidrs": ["10.2.1.0/24", "10.2.2.0/24"],
+      "public_subnet_cidrs": ["10.2.21.0/24", "10.2.22.0/24"]
+    },
+    
+    "tags": {
+      "Environment": "dev",
+      "Project": "devops-internship"
+    },
+    
+    "security_groups": {
+      "backend_sg": {
+        "ingress_ports": [22, 5432, 8080, 3000, 6379],
+        "allowed_cidr_blocks": ["10.2.0.0/16"]
+      },
+      "frontend_sg": {
+        "ingress_ports": [22, 3000, 8080],
+        "allowed_cidr_blocks": ["10.2.0.0/16"]
+      },
+      "proxy_sg": {
+        "ingress_ports": [22, 80, 443, 3000, 8080],
+        "allowed_cidr_blocks": ["0.0.0.0/0"]
+      },
+      "bastion_sg": {
+        "ingress_ports": [22],
+        "allowed_cidr_blocks": ["0.0.0.0/0"]
+      },
+      "database_sg": {
+        "ingress_ports": [5432],
+        "allowed_cidr_blocks": ["10.2.0.0/16"]
+      }
+    },
+    
+    "instances": {
+      "ami": "your_ami",
+      "instance_type": "your_instance_type",
+      "key_name": "your_key",
+      "key_path": "your_key.pem",
+      "ec2_instances": {
+        "backend": {
+          "ami": "your_ami",
+          "instance_type": "your_instance_type",
+          "key_name": "your_key",
+          "security_group": "backend_sg",
+          "iam_role": "ec2-s3-access-profile",
+          "subnet_type": "private",
+          "public_ip": false,
+          "user_data": "backend_provision.sh"
+        },
+        "frontend": {
+          "ami": "your_ami",
+          "instance_type": "your_instance_type",
+          "key_name": "your_key",
+          "security_group": "frontend_sg",
+          "iam_role": "ec2-s3-access-profile",
+          "subnet_type": "private",
+          "public_ip": false,
+          "user_data": "frontend_provision.sh"
+        },
+        "proxy": {
+          "ami": "your_ami",
+          "instance_type": "your_instance_type",
+          "key_name": "your_key",
+          "security_group": "proxy_sg",
+          "subnet_type": "public",
+          "public_ip": true,
+          "iam_role": "",
+          "user_data": null
+        },
+        "bastion": {
+          "ami": "your_ami",
+          "instance_type": "your_instance_type",
+          "key_name": "your_key",
+          "security_group": "bastion_sg",
+          "subnet_type": "public",
+          "public_ip": true,
+          "iam_role": "",
+          "user_data": null
+        }
+      }
+    },
+    
+    "database": {
+      "instance_class": "db.your_instance_type",
+      "allocated_storage": 20
+    },
+    
+    "ssh": {
+      "ssh_user": "your_user",
+      "ssh_key_path": "~/.ssh/your_key.pem",
+      "ssh_machines": ["list", "of", "your_machines"]
+    }
+  },
+  
+  "cloudflare": {
+    "domain_name": "your_domain",
+    "dns_config": {
+      "record_name": "@",
+      "ttl": 1,
+      "proxied": true
+    }
+  },
+  
+  
+  "ansible": {
+    "s3": {
+      "aws_region": "us-east-1",
+      "s3_bucket": "aws--tfstate--bucket",
+      "dest_dir": "/home/your_user",
+      "backend_s3_path": "AWS/Builds/backend.zip",
+      "frontend_s3_path": "AWS/Builds/frontend.zip",
+      "backend_data_s3_path": "AWS/Builds/database.dump",
+      "s3_deployment_debug": false
+    },
+    
+    "ssh": {
+      "ansible_ssh_common_args": "-F your_user_directory/.ssh/config -o StrictHostKeyChecking=no",
+      "python_interpreter": "path_to_venv"
+    },
+    
+    "proxy": {
+      "proxy_user": "your_user",
+      "proxy_config_file": "proxy_config.sh"
+    },
+    
+    "frontend": {
+    "frontend_user": "your_user",
+    "frontend_config_file": "frontend_config.sh"
+    },
+    
+    "backend": {
+      "dump_file": "your_dump_file",
+      "backend_user": "your_user",
+      "backend_config_file": "backend_config.sh",
+      "java_package": "your_java_package",
+      "java_home": "/usr/lib/jvm/your_java_version",
+      "configs_path": "path_to_backend_config",
+      "tomcat_home": "/opt/tomcat/",
+      "tomcat_version": "9.0.82",
+      "tomcat_download_url": "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.82/bin/apache-tomcat-9.0.82.tar.gz"
+    }
+  }
+}
